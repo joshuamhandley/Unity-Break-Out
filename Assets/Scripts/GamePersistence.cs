@@ -9,6 +9,8 @@ public class GamePersistence : MonoBehaviour
     public string Name;
     [HideInInspector]
     public int Score;
+    [HideInInspector]
+    public (string Name, int Score) Highscore;
 
     private void Awake()
     {
@@ -19,7 +21,10 @@ public class GamePersistence : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+    }
 
+    private void Start()
+    {
         LoadGameData();
     }
 
@@ -58,13 +63,17 @@ public class GamePersistence : MonoBehaviour
             if (File.Exists(path))
             {
                 SaveData data = JsonUtility.FromJson<SaveData>(File.ReadAllText(path));
+                this.Highscore = (data.Name, data.Score);
                 this.Name = data.Name;
-                this.Score = data.Score;
             }
         }
         catch (IOException e)
         {
             Debug.LogError("IO Error loading file: " + e.Message);
+        }
+        finally
+        {
+            Debug.Log($"Load Data: {this.Highscore.Name} : {this.Highscore.Score}");
         }
     }
 

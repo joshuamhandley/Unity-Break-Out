@@ -18,7 +18,7 @@ public class MenuUIHandler : MonoBehaviour
     private void Start()
     {
         // loads saved name data and cheks if empty
-        string savedName = GamePersistence.Instance.Name;
+        string savedName = GamePersistence.Instance.Highscore.Name;
         if (savedName != "")
         {
             inputText.text = savedName;

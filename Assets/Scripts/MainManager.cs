@@ -10,6 +10,7 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
     public Text BestScoreText;
+    public Text CurrentPlayerText;
     public GameObject GameOverText;
 
     private bool m_Started = false;
@@ -22,8 +23,8 @@ public class MainManager : MonoBehaviour
     void Start()
     {
         // setting the saved highscore and name
-        BestScoreText.text = $"Best Score: {GamePersistence.Instance.Name} : {GamePersistence.Instance.Score}";
-
+        BestScoreText.text = $"Best Score: {GamePersistence.Instance.Highscore.Name} : {GamePersistence.Instance.Highscore.Score}";
+        CurrentPlayerText.text = $"Current Player: {GamePersistence.Instance.Name}";
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
 
@@ -66,6 +67,7 @@ public class MainManager : MonoBehaviour
             {
                 MenuUIHandler menuUIHandler = new MenuUIHandler();
                 menuUIHandler.Exit();
+
             }
         }
     }
@@ -80,17 +82,18 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
-        GamePersistence.Instance.Score = m_Points;
-        if (IsAHighScore(GamePersistence.Instance.Score, m_Points))
+
+        if (IsAHighScore(m_Points, GamePersistence.Instance.Highscore.Score))
         {
             GamePersistence.Instance.Score = m_Points;
+            GamePersistence.Instance.Highscore = (GamePersistence.Instance.Name, m_Points);
+            GamePersistence.Instance.SaveGameData();
+            BestScoreText.text = $"Best Score: {GamePersistence.Instance.Highscore.Name} : {GamePersistence.Instance.Highscore.Score}";
         }
-        GamePersistence.Instance.SaveGameData();
-        BestScoreText.text = $"Best Score: {GamePersistence.Instance.Name} : {GamePersistence.Instance.Score}";
     }
 
-    private bool IsAHighScore(int currentScore, int newScore)
+    private bool IsAHighScore(int newScore, int highScore)
     {
-        return currentScore < newScore;
+        return newScore > highScore;
     }
 }
